@@ -32,6 +32,7 @@ func main() {
 	signal.Notify(interrupt, os.Interrupt, os.Kill)
 	select {
 	case <-interrupt:
+		redis.DestroyService()
 		logx.Log.Println("log-agent已停止并已取消所有监听")
 	}
 }

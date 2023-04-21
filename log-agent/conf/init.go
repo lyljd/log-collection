@@ -10,6 +10,7 @@ var Cfg = new(Config)
 type Config struct {
 	Kafka Kafka
 	Etcd  Etcd
+	Redis Redis
 }
 
 type Kafka struct {
@@ -20,6 +21,12 @@ type Etcd struct {
 	Addr                string `envconfig:"ETCD_ADDR"`
 	TimeOut             int    `envconfig:"ETCD_TIMEOUT" default:"3"`
 	LogConfigurationKey string `envconfig:"ETCD_LOG_CONFIGURATION_KEY"`
+}
+
+type Redis struct {
+	Addr        string `envconfig:"REDIS_ADDR"`
+	Password    string `envconfig:"REDIS_PASSWORD"`
+	RegisterKey string `envconfig:"REDIS_REGISTER_KEY"`
 }
 
 func Init() {
