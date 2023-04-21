@@ -12,7 +12,8 @@ import (
 
 var (
 	Tasks    []*Task
-	TasksMap map[string]*Task
+	TasksMap = make(map[string]*Task)
+	pathsMap = make(map[string]*Task)
 )
 
 type Task struct {
@@ -52,13 +53,20 @@ func load(data []byte) {
 		Poll:      true,
 	}
 	TasksMap = make(map[string]*Task)
+	newPathsMap := make(map[string]*Task)
 	for k, v := range Tasks {
-		t, err := tail.TailFile(v.Path, config)
-		if err != nil {
-			panic("打开日志文件失败！" + err.Error())
+		if t, ok := pathsMap[v.Path]; ok {
+			Tasks[k].Line = t.Line
+		} else {
+			t, err := tail.TailFile(v.Path, config)
+			if err != nil {
+				logx.Log.Println("打开日志文件失败！" + err.Error())
+			}
+			Tasks[k].Line = t.Lines
 		}
-		Tasks[k].Line = t.Lines
 		Tasks[k].Over = make(chan struct{})
 		TasksMap[v.Topic+":"+v.Path] = v
+		newPathsMap[v.Path] = v
 	}
+	pathsMap = newPathsMap
 }

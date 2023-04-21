@@ -33,6 +33,6 @@ func main() {
 	select {
 	case <-interrupt:
 		redis.DestroyService()
-		logx.Log.Println("log-agent已停止并已取消所有监听")
+		logx.Log.Println("log-agent已停止")
 	}
 }

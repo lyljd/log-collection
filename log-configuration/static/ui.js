@@ -18,6 +18,9 @@ function newKeyElem(key) {
         }
     });
     keyElem.addEventListener("click", function () {
+        if (preClickKeyElem === keyElem) {
+            return;
+        }
         if (!modifyInterceptor("你修改了配置项但还未提交，确定离开吗？")) {
             return;
         }
@@ -29,14 +32,29 @@ function newKeyElem(key) {
         keyElem.style.backgroundColor = '#e1f3d8';
         deleteAllConfigurationElem();
 
-        // TODO axios请求选择key的value
-        //alert(keyElem.innerText);
+        axios.get('/configuration/' + keyElem.innerText)
+            .then(res => res.data)
+            .then(function (res) {
+                if (res.code !== 0) {
+                    alert(res.msg);
+                    return;
+                }
+                if (res.data.length > 0) {
+                    rHeadAndBodyToData();
+                    for (let i = 0; i < res.data.length; i++) {
+                        newConfigurationElem(res.data[i].topic, res.data[i].path, false);
+                    }
+                }
+            })
+            .catch(function (error) {
+                alert(error);
+            })
     });
     keyElem.innerText = key;
     leftBody.appendChild(keyElem);
 }
 
-function newConfigurationElem(topic, path) {
+function newConfigurationElem(topic, path, focus) {
     const clonedElement = configurationElem.cloneNode(true);
     rightBody.appendChild(clonedElement);
 
@@ -48,7 +66,9 @@ function newConfigurationElem(topic, path) {
     topicElem.addEventListener("input", function () {
         modifyStatus = true;
     });
-    topicElem.focus();
+    if (focus) {
+        topicElem.focus();
+    }
 
     const pathElem = clonedElement.getElementsByClassName("path")[0];
     pathElem.value = path;
@@ -62,14 +82,16 @@ function newConfigurationElem(topic, path) {
     const deleteElem = clonedElement.getElementsByClassName("delete")[0];
     deleteElem.addEventListener("click", function () {
         if (document.querySelectorAll('.configurationElem').length === 1) {
-            if (!modifyInterceptor("这是最后一个配置项，删除后会自动提交，你确定吗？")) {
+            if (!confirm("这是最后一个配置项，删除后会自动提交，你确定吗？")) {
                 return;
             }
-            if (!submitAPI("")) {
-                return;
-            }
-            clonedElement.remove();
-            rHeadAndBodyToNoData();
+            submitAPI(preClickKeyElem.innerText, "")
+                .then(function (res) {
+                    if (res) {
+                        clonedElement.remove();
+                        rHeadAndBodyToNoData();
+                    }
+                })
             return;
         }
         clonedElement.remove();
@@ -82,6 +104,7 @@ function rHeadAndBodyToNoData() {
     rightBody.style.height = 'calc(100% - 50px)';
     rightBodyDefault.style.display = 'flex';
     document.getElementById("noDataAddButton").style.display = "inline-block";
+    document.getElementById("notice").innerText = "无配置项";
     modifyStatus = false;
 }
 
@@ -100,13 +123,15 @@ function deleteAllConfigurationElem() {
 }
 
 function deleteAll() {
-    if (!modifyInterceptor("清空后会自动提交，你确定吗？")) {
+    if (!confirm("清空后会自动提交，你确定吗？")) {
         return;
     }
-    if (!submitAPI("")) {
-        return;
-    }
-    deleteAllConfigurationElem();
+    submitAPI(preClickKeyElem.innerText, "")
+        .then(function (res) {
+            if (res) {
+                deleteAllConfigurationElem();
+            }
+        })
 }
 
 function modifyInterceptor(msg) {
@@ -137,40 +162,57 @@ function submit() {
         return false;
     }
 
-    return submitAPI(JSON.stringify(confArr));
+    submitAPI(preClickKeyElem.innerText, JSON.stringify(confArr));
 }
 
-function submitAPI(data) {
-    // TODO axios
-
-    alert("提交成功！");
-    return true;
+function submitAPI(key, data) {
+    return new Promise(function (resolve, reject) {
+        axios.put('/configuration/' + key, {
+            data: data,
+        })
+            .then(function (res) {
+                if (res.data.code !== 0) {
+                    alert(res.data.msg);
+                    resolve(false);
+                } else {
+                    alert("提交成功！");
+                    modifyStatus = false;
+                    resolve(true);
+                }
+            })
+            .catch(function (error) {
+                alert(error);
+                reject(error);
+            });
+    });
 }
 
 document.getElementById("noDataAddButton").addEventListener("click", function () {
     rHeadAndBodyToData();
-    newConfigurationElem("", "");
+    newConfigurationElem("", "", true);
 });
 document.getElementById("addButton").addEventListener("click", function () {
-    newConfigurationElem("", "");
+    newConfigurationElem("", "", true);
 });
 document.getElementById("deleteAllButton").addEventListener("click", deleteAll);
 document.getElementById("submitButton").addEventListener("click", submit);
 
 configurationElem.remove();
 
-//rHeadAndBodyToNoData();
-
-// leftBodyDefault.style.display = 'none';
-// for (let i = 0; i < 10; i++) {
-//     newKeyElem(i);
-// }
-
-/* TODO
-先发送axios请求所有的key，若没有key就啥都不干，若请求失败就仅提示请求失败，然后也啥都不干，
-若请求成功且有key则调用newKeyElem(key)，就拿着第一个key去请求value(etcd中查出配置项)，
-若没有value就调用rHeadAndBodyToNoData()，若请求失败就仅提示请求失败，然后也啥都不干，
-若请求成功且有value，就调用，然后将第一个key置于选中状态，然后把value传入一个统一处理json的函数，
-该函数在上面切换key时调用axios后也会用到，这个函数就是将json转化成一个一个的配置项，
-会调用newConfigurationElem(topic, path)
-*/
+axios.get('/keys')
+    .then(res => res.data)
+    .then(function (res) {
+        if (res.code !== 0) {
+            alert(res.msg);
+            return;
+        }
+        if (res.data.length > 0) {
+            leftBodyDefault.style.display = 'none';
+            for (let i = 0; i < res.data.length; i++) {
+                newKeyElem(res.data[i].key);
+            }
+        }
+    })
+    .catch(function (error) {
+        alert(error);
+    })

@@ -1,18 +1,31 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"log-collection/log-configuration/conf"
+	"log-collection/log-configuration/database"
+	"log-collection/log-configuration/logx"
+	"log-collection/log-configuration/middleware"
+	"log-collection/log-configuration/server"
+	"os"
+	"os/signal"
 )
 
+func init() {
+	conf.Init()
+	logx.Init()
+	database.Init()
+	middleware.Init()
+}
+
 func main() {
-	r := gin.Default()
+	server.Run()
 
-	r.LoadHTMLFiles("./log-configuration/ui.html")
-	r.Static("/static", "./log-configuration/static")
+	logx.Log.Println("log-configuration已启动")
 
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(200, "ui.html", nil)
-	})
-
-	_ = r.Run(":1295")
+	interrupt := make(chan os.Signal)
+	signal.Notify(interrupt, os.Interrupt, os.Kill)
+	select {
+	case <-interrupt:
+		logx.Log.Println("log-configuration已停止")
+	}
 }

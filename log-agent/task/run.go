@@ -19,7 +19,6 @@ func Run() {
 
 func (t *Task) run() {
 	go func() {
-		logx.Log.Println(conf.Cfg.Etcd.LogConfigurationKey + "中" + t.Topic + "(" + t.Path + ")已监听")
 		for {
 			select {
 			case line := <-t.Line:
@@ -31,7 +30,6 @@ func (t *Task) run() {
 			}
 		}
 	outer:
-		logx.Log.Println(conf.Cfg.Etcd.LogConfigurationKey + "中" + t.Topic + "(" + t.Path + ")已取消监听")
 	}()
 }
 
@@ -55,6 +53,8 @@ func watchLogConfigurationKey() {
 					for _, t := range Tasks {
 						t.stop()
 					}
+					Tasks = nil
+					TasksMap = make(map[string]*Task)
 				default:
 					logx.Log.Println("未识别的etcd事件类型：" + evt.Type.String())
 				}
@@ -64,13 +64,22 @@ func watchLogConfigurationKey() {
 }
 
 func updateTask(data []byte) {
-	for _, t := range TasksMap {
-		t.stop()
+	oldTasksMap := make(map[string]*Task)
+	for k, v := range TasksMap {
+		oldTasksMap[k] = v
 	}
 
 	load(data)
 
-	for _, t := range TasksMap {
-		t.run()
+	for k, v := range TasksMap {
+		if _, ok := oldTasksMap[k]; !ok {
+			v.run()
+		}
+	}
+
+	for k, v := range oldTasksMap {
+		if _, ok := TasksMap[k]; !ok {
+			v.stop()
+		}
 	}
 }
