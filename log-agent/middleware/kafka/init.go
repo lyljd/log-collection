@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var client sarama.SyncProducer
+var Client sarama.SyncProducer
 
 func Init() {
 	addr := strings.Split(conf.Cfg.Kafka.Addr, ",")
@@ -21,5 +21,5 @@ func Init() {
 		panic("新建kafka生产者失败！" + err.Error())
 	}
 
-	client = cli
+	Client = cli
 }

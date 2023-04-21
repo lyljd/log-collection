@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>log-configuration</title>
+    <link rel="stylesheet" href="static/ui.css">
+    <link rel="shortcut icon" href="static/favicon.ico" />
+</head>
+
+<body>
+    <div class="parent">
+        <div class="leftChild">
+            <div class="title">Key</div>
+            <div id="leftBody">
+                <div id="leftBodyDefault">No Key</div>
+            </div>
+        </div><!--
+        -->
+        <div class="rightChild">
+            <div class="title">配置项</div>
+            <div id="rightHead">
+                <button id="addButton">新增</button>
+                <button id="deleteAllButton">清空</button>
+                <button id="submitButton">提交</button>
+            </div>
+            <div id="rightBody">
+                <div id="rightBodyDefault">
+                    <span>无配置项</span>
+                    <button id="noDataAddButton">新增</button>
+                </div>
+                <div class="configurationElem">
+                    topic:
+                    <input type="text" class="topic">
+                    path:
+                    <input type="text" class="path">
+                    <span class="delete">✕</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="static/ui.js"></script>
+</body>
+
+</html>
