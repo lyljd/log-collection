@@ -31,7 +31,7 @@ type ElasticSearch struct {
 }
 
 func Init() {
-	if err := godotenv.Load("./log-agent/.env"); err != nil {
+	if err := godotenv.Load("./log-transfer/.env"); err != nil {
 		panic("读取环境变量失败！" + err.Error())
 	}
 

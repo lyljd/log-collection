@@ -6,6 +6,7 @@ import (
 	"log-collection/log-transfer/middleware"
 	"log-collection/log-transfer/middleware/etcd"
 	"log-collection/log-transfer/middleware/kafka"
+	"log-collection/log-transfer/task"
 	"os"
 	"os/signal"
 )
@@ -14,8 +15,11 @@ func init() {
 	conf.Init()
 	logx.Init()
 	middleware.Init()
+	task.Init()
 }
 func main() {
+	task.Run()
+
 	logx.Log.Println("log-transfer已启动")
 
 	interrupt := make(chan os.Signal)

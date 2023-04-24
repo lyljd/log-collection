@@ -29,6 +29,9 @@ func (g *consumerGroup) ConsumeClaim(session sarama.ConsumerGroupSession, claim 
 	for {
 		select {
 		case m := <-claim.Messages():
+			if m == nil {
+				goto outer
+			}
 			msg, err := json.Marshal(&message{
 				Log:  string(m.Value),
 				Time: m.Timestamp.Format("2006-01-02 15:04:05"),
@@ -93,11 +96,8 @@ func getConsumerNum(topic []string) (consumerNum int) {
 
 func listeningError() {
 	go func() {
-		for {
-			select {
-			case err := <-Client.Errors():
-				logx.Log.Println("kafka发生错误！" + err.Error())
-			}
+		for err := range Client.Errors() {
+			logx.Log.Println("kafka发生错误！" + err.Error())
 		}
 	}()
 }

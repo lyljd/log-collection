@@ -2,7 +2,7 @@ package etcd
 
 import (
 	clientv3 "go.etcd.io/etcd/client/v3"
-	"log-collection/log-configuration/conf"
+	"log-collection/log-transfer/conf"
 	"strings"
 	"time"
 )

@@ -40,28 +40,23 @@ func (t *Task) stop() {
 func watchLogConfigurationKey() {
 	go func() {
 		watchChan := etcd.Client.Watch(context.Background(), conf.Cfg.Etcd.LogConfigurationKey)
-		for {
-			select {
-			case watchResp := <-watchChan:
-				if len(watchResp.Events) == 0 {
-					continue
+		for watchResp := range watchChan {
+			evt := watchResp.Events[0]
+			switch evt.Type {
+			case mvccpb.PUT:
+				logx.Log.Println("etcd中" + conf.Cfg.Etcd.LogConfigurationKey + "已更新")
+				updateTask(evt.Kv.Value)
+			case mvccpb.DELETE:
+				logx.Log.Println("etcd中" + conf.Cfg.Etcd.LogConfigurationKey + "已删除")
+				for _, t := range Tasks {
+					t.stop()
 				}
-				evt := watchResp.Events[0]
-				switch evt.Type {
-				case mvccpb.PUT:
-					logx.Log.Println("etcd中" + conf.Cfg.Etcd.LogConfigurationKey + "已更新")
-					updateTask(evt.Kv.Value)
-				case mvccpb.DELETE:
-					logx.Log.Println("etcd中" + conf.Cfg.Etcd.LogConfigurationKey + "已删除")
-					for _, t := range Tasks {
-						t.stop()
-					}
-					Tasks = nil
-					TasksMap = make(map[string]*Task)
-				default:
-					logx.Log.Println("未识别的etcd事件类型：" + evt.Type.String())
-				}
+				Tasks = nil
+				TasksMap = make(map[string]*Task)
+			default:
+				logx.Log.Println("未识别的etcd事件类型：" + evt.Type.String())
 			}
+
 		}
 	}()
 }
