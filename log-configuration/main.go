@@ -3,8 +3,10 @@ package main
 import (
 	"log-collection/log-configuration/conf"
 	"log-collection/log-configuration/database"
+	"log-collection/log-configuration/database/redis"
 	"log-collection/log-configuration/logx"
 	"log-collection/log-configuration/middleware"
+	"log-collection/log-configuration/middleware/etcd"
 	"log-collection/log-configuration/server"
 	"os"
 	"os/signal"
@@ -26,6 +28,12 @@ func main() {
 	signal.Notify(interrupt, os.Interrupt, os.Kill)
 	select {
 	case <-interrupt:
+		releaseConn()
 		logx.Log.Println("log-configuration已停止")
 	}
+}
+
+func releaseConn() {
+	_ = redis.Client.Close()
+	_ = etcd.Client.Close()
 }

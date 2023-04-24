@@ -6,6 +6,8 @@ import (
 	"log-collection/log-agent/database/redis"
 	"log-collection/log-agent/logx"
 	"log-collection/log-agent/middleware"
+	"log-collection/log-agent/middleware/etcd"
+	"log-collection/log-agent/middleware/kafka"
 	"log-collection/log-agent/task"
 	"os"
 	"os/signal"
@@ -33,6 +35,13 @@ func main() {
 	select {
 	case <-interrupt:
 		redis.DestroyService()
+		releaseConn()
 		logx.Log.Println("log-agent已停止")
 	}
+}
+
+func releaseConn() {
+	_ = redis.Client.Close()
+	_ = kafka.Client.Close()
+	_ = etcd.Client.Close()
 }

@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/Shopify/sarama v1.38.1
+	github.com/elastic/go-elasticsearch/v7 v7.17.7
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/hpcloud/tail v1.0.0
