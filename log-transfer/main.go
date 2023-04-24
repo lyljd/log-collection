@@ -28,6 +28,6 @@ func main() {
 }
 
 func releaseConn() {
-	_ = kafka.Client.Close()
+	kafka.ReleaseConn()
 	_ = etcd.Client.Close()
 }

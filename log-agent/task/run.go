@@ -43,6 +43,9 @@ func watchLogConfigurationKey() {
 		for {
 			select {
 			case watchResp := <-watchChan:
+				if len(watchResp.Events) == 0 {
+					continue
+				}
 				evt := watchResp.Events[0]
 				switch evt.Type {
 				case mvccpb.PUT:
