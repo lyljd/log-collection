@@ -1,13 +1,13 @@
 package main
 
 import (
-	"log-collection/log-configuration/conf"
-	"log-collection/log-configuration/database"
-	"log-collection/log-configuration/database/redis"
-	"log-collection/log-configuration/logx"
-	"log-collection/log-configuration/middleware"
-	"log-collection/log-configuration/middleware/etcd"
-	"log-collection/log-configuration/server"
+	"log-configuration/conf"
+	"log-configuration/database"
+	"log-configuration/database/redis"
+	"log-configuration/logx"
+	"log-configuration/middleware"
+	"log-configuration/middleware/etcd"
+	"log-configuration/server"
 	"os"
 	"os/signal"
 )

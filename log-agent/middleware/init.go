@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"log-collection/log-agent/middleware/etcd"
-	"log-collection/log-agent/middleware/kafka"
+	"log-agent/middleware/etcd"
+	"log-agent/middleware/kafka"
 )
 
 func Init() {

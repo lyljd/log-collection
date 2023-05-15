@@ -1,7 +1,7 @@
 package database
 
 import (
-	"log-collection/log-configuration/database/redis"
+	"log-configuration/database/redis"
 )
 
 func Init() {

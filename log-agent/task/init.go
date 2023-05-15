@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/hpcloud/tail"
-	"log-collection/log-agent/conf"
-	"log-collection/log-agent/logx"
-	"log-collection/log-agent/middleware/etcd"
+	"log-agent/conf"
+	"log-agent/logx"
+	"log-agent/middleware/etcd"
 	"time"
 )
 

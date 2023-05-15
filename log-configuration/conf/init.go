@@ -25,7 +25,7 @@ type Redis struct {
 }
 
 func Init() {
-	if err := godotenv.Load("./log-configuration/.env"); err != nil {
+	if err := godotenv.Load(); err != nil {
 		panic("读取环境变量失败！" + err.Error())
 	}
 

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"log-collection/log-transfer/conf"
-	"log-collection/log-transfer/logx"
-	"log-collection/log-transfer/middleware"
-	"log-collection/log-transfer/middleware/etcd"
-	"log-collection/log-transfer/middleware/kafka"
-	"log-collection/log-transfer/task"
+	"log-transfer/conf"
+	"log-transfer/logx"
+	"log-transfer/middleware"
+	"log-transfer/middleware/etcd"
+	"log-transfer/middleware/kafka"
+	"log-transfer/task"
 	"os"
 	"os/signal"
 )
@@ -17,6 +17,7 @@ func init() {
 	middleware.Init()
 	task.Init()
 }
+
 func main() {
 	task.Run()
 

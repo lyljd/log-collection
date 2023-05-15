@@ -2,7 +2,7 @@ package kafka
 
 import (
 	"github.com/Shopify/sarama"
-	"log-collection/log-agent/conf"
+	"log-agent/conf"
 	"strings"
 )
 

@@ -2,15 +2,15 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	"log-collection/log-configuration/api"
+	"log-configuration/api"
 )
 
 func Run() {
 	go func() {
 		r := gin.Default()
 
-		r.LoadHTMLFiles("./log-configuration/ui.html")
-		r.Static("/static", "./log-configuration/static")
+		r.LoadHTMLFiles("ui.html")
+		r.Static("/static", "static")
 
 		r.GET("/", func(c *gin.Context) {
 			c.HTML(200, "ui.html", nil)

@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"log-collection/log-configuration/serializer"
-	"log-collection/log-configuration/service/key"
+	"log-configuration/serializer"
+	"log-configuration/service/key"
 )
 
 func GetKeys(c *gin.Context) {

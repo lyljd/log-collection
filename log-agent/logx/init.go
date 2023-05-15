@@ -9,7 +9,7 @@ import (
 var Log *log.Logger
 
 func Init() {
-	f, err := os.OpenFile("./log-agent/.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm)
+	f, err := os.OpenFile(".log", os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm)
 	if err != nil {
 		panic("打开日志文件失败！" + err.Error())
 	}

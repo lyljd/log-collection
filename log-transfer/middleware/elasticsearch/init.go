@@ -2,7 +2,7 @@ package elasticsearch
 
 import (
 	"github.com/elastic/go-elasticsearch/v7"
-	"log-collection/log-transfer/conf"
+	"log-transfer/conf"
 	"strings"
 )
 

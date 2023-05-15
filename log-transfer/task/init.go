@@ -3,9 +3,9 @@ package task
 import (
 	"context"
 	"encoding/json"
-	"log-collection/log-transfer/conf"
-	"log-collection/log-transfer/logx"
-	"log-collection/log-transfer/middleware/etcd"
+	"log-transfer/conf"
+	"log-transfer/logx"
+	"log-transfer/middleware/etcd"
 	"time"
 )
 

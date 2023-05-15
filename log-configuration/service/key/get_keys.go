@@ -1,9 +1,9 @@
 package key
 
 import (
-	"log-collection/log-configuration/conf"
-	"log-collection/log-configuration/database/redis"
-	"log-collection/log-configuration/serializer"
+	"log-configuration/conf"
+	"log-configuration/database/redis"
+	"log-configuration/serializer"
 )
 
 type GetKeysService struct {

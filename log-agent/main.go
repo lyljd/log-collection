@@ -1,14 +1,14 @@
 package main
 
 import (
-	"log-collection/log-agent/conf"
-	"log-collection/log-agent/database"
-	"log-collection/log-agent/database/redis"
-	"log-collection/log-agent/logx"
-	"log-collection/log-agent/middleware"
-	"log-collection/log-agent/middleware/etcd"
-	"log-collection/log-agent/middleware/kafka"
-	"log-collection/log-agent/task"
+	"log-agent/conf"
+	"log-agent/database"
+	"log-agent/database/redis"
+	"log-agent/logx"
+	"log-agent/middleware"
+	"log-agent/middleware/etcd"
+	"log-agent/middleware/kafka"
+	"log-agent/task"
 	"os"
 	"os/signal"
 )

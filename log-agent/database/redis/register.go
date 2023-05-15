@@ -2,7 +2,7 @@ package redis
 
 import (
 	"errors"
-	"log-collection/log-agent/conf"
+	"log-agent/conf"
 )
 
 func RegisterService() error {

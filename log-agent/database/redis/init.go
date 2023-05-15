@@ -2,7 +2,7 @@ package redis
 
 import (
 	"github.com/go-redis/redis"
-	"log-collection/log-agent/conf"
+	"log-agent/conf"
 )
 
 var Client *redis.Client

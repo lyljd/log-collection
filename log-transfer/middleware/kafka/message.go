@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/Shopify/sarama"
-	"log-collection/log-transfer/conf"
-	"log-collection/log-transfer/logx"
-	"log-collection/log-transfer/middleware/elasticsearch"
+	"log-transfer/conf"
+	"log-transfer/logx"
+	"log-transfer/middleware/elasticsearch"
 	"runtime"
 )
 

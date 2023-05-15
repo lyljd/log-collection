@@ -2,8 +2,8 @@ package configuration
 
 import (
 	"context"
-	"log-collection/log-configuration/middleware/etcd"
-	"log-collection/log-configuration/serializer"
+	"log-configuration/middleware/etcd"
+	"log-configuration/serializer"
 	"time"
 )
 

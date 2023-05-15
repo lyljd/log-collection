@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"log-collection/log-configuration/serializer"
-	"log-collection/log-configuration/service/configuration"
+	"log-configuration/serializer"
+	"log-configuration/service/configuration"
 )
 
 func GetConfigurationByKey(c *gin.Context) {

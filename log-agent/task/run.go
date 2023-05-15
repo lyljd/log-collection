@@ -3,10 +3,10 @@ package task
 import (
 	"context"
 	"go.etcd.io/etcd/api/v3/mvccpb"
-	"log-collection/log-agent/conf"
-	"log-collection/log-agent/logx"
-	"log-collection/log-agent/middleware/etcd"
-	"log-collection/log-agent/middleware/kafka"
+	"log-agent/conf"
+	"log-agent/logx"
+	"log-agent/middleware/etcd"
+	"log-agent/middleware/kafka"
 )
 
 func Run() {
