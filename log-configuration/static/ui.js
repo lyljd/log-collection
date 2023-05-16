@@ -8,14 +8,58 @@ let modifyStatus = false;
 
 function newKeyElem(key) {
     const keyElem = document.createElement('div');
-    keyElem.style.cssText = 'width: 100%; height: 50px; line-height: 50px; text-align: center; border-bottom: 1px solid #C0C4CC; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background-color: #f0f9eb;';
+    keyElem.style.cssText = 'width: 100%; height: 50px; line-height: 50px; text-align: center; border-bottom: 1px solid #C0C4CC; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background-color: #f0f9eb; position: relative;';
+    keyElem.classList.add('keyElem');
+
+    const delBtn = document.createElement('span');
+    delBtn.style.cssText = 'color: #f89898; font-size: 20px; cursor: default; display: none; position: absolute; right:15px';
+    delBtn.textContent = 'x';
+
+    delBtn.addEventListener('click', (event) => {
+        event.stopPropagation(); //阻止向上传播(父元素还有click事件)
+        if (!confirm("通常只会在因意外关闭log-agent(目前已知有：删除log-agent容器)而导致无法注销服务时删除，确定删除吗？")) {
+            return;
+        }
+        if (preClickKeyElem === keyElem) {
+            if (!modifyInterceptor("你修改了配置项但还未提交，确定删除吗？")) {
+                return;
+            }
+            rHeadAndBodyToDefault();
+            keyElem.style.backgroundColor = '#f0f9eb';
+        }
+        axios.delete('/key/' + getKeyElemInnerText(keyElem))
+            .then(res => res.data)
+            .then(function (res) {
+                if (res.code !== 0) {
+                    alert(res.msg);
+                    return;
+                }
+                keyElem.remove();
+                if (leftBody.querySelectorAll('.keyElem').length === 0) {
+                    leftBodyDefault.style.display = 'flex';
+                }
+                alert("删除成功！");
+            })
+            .catch(function (error) {
+                alert(error);
+            })
+    });
+    delBtn.addEventListener('mouseover', () => {
+        delBtn.style.color = 'red';
+    });
+    delBtn.addEventListener('mouseout', () => {
+        delBtn.style.color = '#f89898';
+    });
+
     keyElem.addEventListener('mouseover', () => {
-        keyElem.style.backgroundColor = '#e1f3d8';
+        keyElem.style.backgroundColor = '#d1edc4';
+        delBtn.style.display = 'inline';
     });
     keyElem.addEventListener('mouseout', () => {
         if (keyElem !== preClickKeyElem) {
             keyElem.style.backgroundColor = '#f0f9eb';
         }
+        delBtn.style.display = 'none';
     });
     keyElem.addEventListener("click", function () {
         if (preClickKeyElem === keyElem) {
@@ -29,10 +73,11 @@ function newKeyElem(key) {
             preClickKeyElem.style.backgroundColor = '#f0f9eb';
         }
         preClickKeyElem = keyElem;
-        keyElem.style.backgroundColor = '#e1f3d8';
+        keyElem.style.backgroundColor = '#d1edc4';
         deleteAllConfigurationElem();
+        rHeadAndBodyToNoData();
 
-        axios.get('/configuration/' + keyElem.innerText)
+        axios.get('/configuration/' + getKeyElemInnerText(keyElem))
             .then(res => res.data)
             .then(function (res) {
                 if (res.code !== 0) {
@@ -50,8 +95,18 @@ function newKeyElem(key) {
                 alert(error);
             })
     });
+
     keyElem.innerText = key;
     leftBody.appendChild(keyElem);
+    keyElem.appendChild(delBtn);
+}
+
+// 因为在KeyElem中添加了一个text值为x的span作为删除按钮，所以在取innerText的时候会将x算进去
+function getKeyElemInnerText(ke) {
+    if (ke === undefined) {
+        return "undefined"
+    }
+    return ke.innerText.slice(0, -1);
 }
 
 function newConfigurationElem(topic, path, focus) {
@@ -85,7 +140,7 @@ function newConfigurationElem(topic, path, focus) {
             if (!confirm("这是最后一个配置项，删除后会自动提交，你确定吗？")) {
                 return;
             }
-            submitAPI(preClickKeyElem.innerText, "")
+            submitAPI(getKeyElemInnerText(preClickKeyElem), "")
                 .then(function (res) {
                     if (res) {
                         clonedElement.remove();
@@ -114,22 +169,33 @@ function rHeadAndBodyToData() {
     rightHead.style.display = 'flex';
 }
 
+function rHeadAndBodyToDefault() {
+    preClickKeyElem = undefined;
+    deleteAllConfigurationElem();
+    rightHead.style.display = 'none';
+    rightBody.style.height = 'calc(100% - 50px)';
+    rightBodyDefault.style.display = 'flex';
+    document.getElementById("noDataAddButton").style.display = "none";
+    document.getElementById("notice").innerText = "请选择Key";
+    modifyStatus = false;
+}
+
 function deleteAllConfigurationElem() {
     const configurationElems = document.querySelectorAll('.configurationElem');
     configurationElems.forEach(function (elem) {
         elem.remove();
     });
-    rHeadAndBodyToNoData();
 }
 
 function deleteAll() {
     if (!confirm("清空后会自动提交，你确定吗？")) {
         return;
     }
-    submitAPI(preClickKeyElem.innerText, "")
+    submitAPI(getKeyElemInnerText(preClickKeyElem), "")
         .then(function (res) {
             if (res) {
                 deleteAllConfigurationElem();
+                rHeadAndBodyToNoData();
             }
         })
 }
@@ -162,7 +228,7 @@ function submit() {
         return false;
     }
 
-    submitAPI(preClickKeyElem.innerText, JSON.stringify(confArr));
+    submitAPI(getKeyElemInnerText(preClickKeyElem), JSON.stringify(confArr));
 }
 
 function submitAPI(key, data) {

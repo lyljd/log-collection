@@ -22,6 +22,8 @@ func Run() {
 
 		r.PUT("/configuration/:key", api.SetConfigurationByKey)
 
+		r.DELETE("/key/:key", api.DeleteKey)
+
 		_ = r.Run(":1295")
 	}()
 }

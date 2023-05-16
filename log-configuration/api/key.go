@@ -15,3 +15,13 @@ func GetKeys(c *gin.Context) {
 		c.JSON(200, serializer.CliParErr("", err))
 	}
 }
+
+func DeleteKey(c *gin.Context) {
+	var s key.DeleteKeyService
+	if err := c.ShouldBind(&s); err == nil {
+		res := s.DeleteKey(c.Param("key"))
+		c.JSON(200, res)
+	} else {
+		c.JSON(200, serializer.CliParErr("", err))
+	}
+}

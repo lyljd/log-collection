@@ -11,6 +11,7 @@ import (
 	"log-agent/task"
 	"os"
 	"os/signal"
+	"syscall"
 )
 
 func init() {
@@ -31,7 +32,7 @@ func main() {
 	logx.Log.Println("log-agent已启动")
 
 	interrupt := make(chan os.Signal)
-	signal.Notify(interrupt, os.Interrupt, os.Kill)
+	signal.Notify(interrupt, os.Interrupt, os.Kill, syscall.SIGTERM)
 	select {
 	case <-interrupt:
 		redis.DestroyService()
