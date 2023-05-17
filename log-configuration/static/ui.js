@@ -102,6 +102,7 @@ function newKeyElem(key) {
 }
 
 // 因为在KeyElem中添加了一个text值为x的span作为删除按钮，所以在取innerText的时候会将x算进去
+// 如果KeyElem没有鼠标悬浮时就不要调用该函数，因为此时x不存在，目前不需要调用的有：preClickKeyElem
 function getKeyElemInnerText(ke) {
     if (ke === undefined) {
         return "undefined"
@@ -140,7 +141,7 @@ function newConfigurationElem(topic, path, focus) {
             if (!confirm("这是最后一个配置项，删除后会自动提交，你确定吗？")) {
                 return;
             }
-            submitAPI(getKeyElemInnerText(preClickKeyElem), "")
+            submitAPI(preClickKeyElem.innerText, "")
                 .then(function (res) {
                     if (res) {
                         clonedElement.remove();
@@ -191,7 +192,7 @@ function deleteAll() {
     if (!confirm("清空后会自动提交，你确定吗？")) {
         return;
     }
-    submitAPI(getKeyElemInnerText(preClickKeyElem), "")
+    submitAPI(preClickKeyElem.innerText, "")
         .then(function (res) {
             if (res) {
                 deleteAllConfigurationElem();
@@ -227,8 +228,7 @@ function submit() {
         alert("提交失败，有配置项为空！");
         return false;
     }
-
-    submitAPI(getKeyElemInnerText(preClickKeyElem), JSON.stringify(confArr));
+    submitAPI(preClickKeyElem.innerText, JSON.stringify(confArr));
 }
 
 function submitAPI(key, data) {

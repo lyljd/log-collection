@@ -9,6 +9,7 @@ import (
 	"log-transfer/task"
 	"os"
 	"os/signal"
+	"syscall"
 )
 
 func init() {
@@ -24,7 +25,7 @@ func main() {
 	logx.Log.Println("log-transfer已启动")
 
 	interrupt := make(chan os.Signal)
-	signal.Notify(interrupt, os.Interrupt, os.Kill)
+	signal.Notify(interrupt, os.Interrupt, os.Kill, syscall.SIGTERM)
 	select {
 	case <-interrupt:
 		releaseConn()
@@ -33,6 +34,6 @@ func main() {
 }
 
 func releaseConn() {
-	kafka.ReleaseConn()
+	_ = kafka.Client.Close()
 	_ = etcd.Client.Close()
 }

@@ -46,7 +46,7 @@ func load(data []byte) {
 	}
 
 	config := tail.Config{
-		ReOpen:    true,
+		ReOpen:    false,
 		Follow:    true,
 		Location:  &tail.SeekInfo{Offset: 0, Whence: 2},
 		MustExist: false,

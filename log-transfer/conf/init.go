@@ -31,9 +31,7 @@ type ElasticSearch struct {
 }
 
 func Init() {
-	if err := godotenv.Load(); err != nil {
-		panic("读取环境变量失败！" + err.Error())
-	}
+	_ = godotenv.Load()
 
 	if err := envconfig.Process("", Cfg); err != nil {
 		panic("环境变量绑定Cfg失败！" + err.Error())

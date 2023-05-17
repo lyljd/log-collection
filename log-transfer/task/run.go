@@ -10,7 +10,7 @@ import (
 )
 
 func Run() {
-	kafka.ReceiveMessage(Topics)
+	kafka.StartReceiveMessage(topics)
 
 	watchLogConfigurationKey()
 }
@@ -26,12 +26,11 @@ func watchLogConfigurationKey() {
 			switch evt.Type {
 			case mvccpb.PUT:
 				logx.Log.Println("etcd中" + conf.Cfg.Etcd.LogConfigurationKey + "已更新")
-				load(evt.Kv.Value)
-				kafka.ReceiveMessage(Topics)
+				loadTopics(evt.Kv.Value)
+				kafka.StartReceiveMessage(topics)
 			case mvccpb.DELETE:
 				logx.Log.Println("etcd中" + conf.Cfg.Etcd.LogConfigurationKey + "已删除")
-				kafka.DestroyConsumerGroups()
-				Topics = []string{}
+				topics = []string{}
 			default:
 				logx.Log.Println("未识别的etcd事件类型：" + evt.Type.String())
 			}
