@@ -1,2 +1,0 @@
-优化：log-transfer适配docker；log-transfer处理逻辑大幅调整；容器内时区切换为上海
-修复：log-configuration配置项提交失效；log-agent无法监测挂载文件；log-configuration漏接收SIGTERM信号(容器停止)；log-transfer日志开头错显示为log-agent

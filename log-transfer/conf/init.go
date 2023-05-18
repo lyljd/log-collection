@@ -17,7 +17,6 @@ type Config struct {
 type Kafka struct {
 	Addr          string `envconfig:"KAFKA_ADDR"`
 	ConsumerGroup string `envconfig:"KAFKA_CONSUMER_GROUP"`
-	DlqTopic      string `envconfig:"DLQ_TOPIC" default:"dlq"`
 }
 
 type Etcd struct {
