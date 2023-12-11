@@ -6,11 +6,14 @@ import (
 	"github.com/Shopify/sarama"
 	"log-transfer/logx"
 	"log-transfer/middleware/elasticsearch"
+	"log-transfer/tool"
+	"time"
 )
 
 type message struct {
-	Log  string `json:"log"`
-	Time string `json:"time"`
+	Content   string `json:"content"`
+	Date      string `json:"date"`
+	Timestamp int64  `json:"timestamp"`
 }
 
 type consumerGroup struct{}
@@ -24,10 +27,16 @@ func (g *consumerGroup) ConsumeClaim(session sarama.ConsumerGroupSession, claim 
 			if m == nil {
 				goto outer
 			}
-			msg, _ := json.Marshal(&message{
-				Log:  string(m.Value),
-				Time: m.Timestamp.Format("2006-01-02 15:04:05"),
-			})
+
+			msg := m.Value
+			if !tool.IsJSON(string(m.Value)) {
+				msg, _ = json.Marshal(&message{
+					Content:   string(m.Value),
+					Date:      time.Now().Format(time.DateTime),
+					Timestamp: time.Now().Unix(),
+				})
+			}
+
 			if err := elasticsearch.SendMessage(m.Topic, msg); err != nil {
 				logx.Log.Println("向es发送数据失败！" + err.Error())
 				logx.Log.Println("此条数据为：" + string(msg))

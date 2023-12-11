@@ -26,7 +26,8 @@ type Etcd struct {
 }
 
 type ElasticSearch struct {
-	Addr string `envconfig:"ELASTICSEARCH_ADDR"`
+	Addr     string `envconfig:"ELASTICSEARCH_ADDR"`
+	Analyzer string `envconfig:"ELASTICSEARCH_ANALYZER" default:"standard"`
 }
 
 func Init() {

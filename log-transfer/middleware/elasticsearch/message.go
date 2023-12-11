@@ -7,6 +7,10 @@ import (
 )
 
 func SendMessage(index string, body []byte) error {
+	if err := createIndex(index, getStrTypProperties(body)); err != nil {
+		return err
+	}
+
 	req := esapi.IndexRequest{
 		Index: index,
 		Body:  bytes.NewReader(body),
@@ -14,5 +18,6 @@ func SendMessage(index string, body []byte) error {
 	if _, err := req.Do(context.Background(), Client); err != nil {
 		return err
 	}
+
 	return nil
 }

@@ -6,7 +6,7 @@ log-collection是一个日志收集工具，其基于业界常用的ELK解决方
 
 1. 使用Docker Compose file启动容器
 
-```yaml
+```yml
 version: "3.8"
 
 services:
@@ -86,11 +86,11 @@ services:
     depends_on:
       - elasticsearch
   log-agent:
-    image: lyljd/log-agent:1.0
+    image: lyljd/log-agent:1.0-arm8
     container_name: log-agent
     restart: always
     volumes:
-      - log-agent:/app/log
+      - log-agent_data:/app/log
       - ./log-test_log:/app/log-test_log
     networks:
       - log-collection
@@ -100,14 +100,16 @@ services:
       ETCD_LOG_CONFIGURATION_KEY: log-configuration
       REDIS_ADDR: host.docker.internal:6379
       REDIS_REGISTER_KEY: log-configuration
+    depends_on:
+      - kafka
   log-configuration:
-    image: lyljd/log-configuration:1.0
+    image: lyljd/log-configuration:1.0-arm8
     container_name: log-configuration
     restart: always
     ports:
       - "1295:1295"
     volumes:
-      - log-configuration:/app/log
+      - log-configuration_data:/app/log
     networks:
       - log-collection
     environment:
@@ -116,11 +118,12 @@ services:
       REDIS_ADDR: host.docker.internal:6379
       REDIS_REGISTER_KEY: log-configuration
   log-transfer:
-    image: lyljd/log-transfer:1.0
+    image: lyljd/log-transfer:1.0-arm8-upgrade
     container_name: log-transfer
     restart: always
     volumes:
-      - log-transfer:/app/log
+      - log-transfer_data:/app/log
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - log-collection
     environment:
@@ -129,14 +132,18 @@ services:
       ETCD_ADDR: host.docker.internal:2379
       ETCD_LOG_CONFIGURATION_KEY: log-configuration
       ELASTICSEARCH_ADDR: http://host.docker.internal:9200
+      ELASTICSEARCH_ANALYZER: standard
+    depends_on:
+      - kafka
   log-test:
-    image: lyljd/log-test:1.0
+    image: lyljd/log-test:1.0-arm8-upgrade
     container_name: log-test
     restart: always
     ports:
       - "1296:1296"
     volumes:
       - ./log-test_log:/app/log
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - log-collection
 
@@ -147,41 +154,42 @@ volumes:
     name: kafka_data
   redis_data:
     name: redis_data
-  log-agent:
-    name: log-agent
-  log-configuration:
-    name: log-configuration
-  log-transfer:
-    name: log-transfer
   elasticsearch_data:
     name: elasticsearch_data
   kibana_data:
     name: kibana_data
+  log-agent_data:
+    name: log-agent_data
+  log-configuration_data:
+    name: log-configuration_data
+  log-transfer_data:
+    name: log-transfer_data
 
 networks:
   log-collection:
     name: log-collection
 ```
 
-2. 访问`http://localhost:1295`配置log-agent欲监测的日志文件
+2. 访问`http://localhost:1295` 配置log-agent欲监测的日志文件
 
-   ![image-20230518上午113025345](README.assets/image-20230518上午113025345.png)
+![image-20230518上午113025345](README.assets/step2.png)
 
-3. 访问`http://localhost:1296/?log=`模拟生产一条日志到.log文件中
+3. 访问`http://localhost:1296/?content=&type=` 模拟生产一条日志到.log文件中
 
-   <img src="README.assets/image-20230518下午121318547.png" alt="image-20230518下午121318547" style="zoom:50%;" />
+![image-20230518下午12202982](README.assets/step3-1.png)
+![image-20230518下午12202982](README.assets/step3-2.png)
 
-4. 访问`http://localhost:5601/app/management/kibana/dataViews`创建数据视图
+4. 访问`http://localhost:5601/app/management/kibana/dataViews` 创建数据视图
 
-![image-20230518下午122202086](README.assets/image-20230518下午122202086.png)
+![image-20230518下午12202982](README.assets/step4.png)
 
-5. 访问`http://localhost:5601/app/discover`即可看到刚才生产的日志
+5. 访问`http://localhost:5601/app/discover` 即可看到刚才生产的日志
 
-   ![image-20230518下午122614491](README.assets/image-20230518下午122614491.png)
+![image-20230518下午12202982](README.assets/step5.png)
 
 ## 架构
 
-![image-20230518下午12202982](README.assets/image-20230518下午12202982.png)
+![image-20230518下午12202982](README.assets/architecture.png)
 
 ## 优势
 
