@@ -50,7 +50,7 @@ services:
       - log-collection
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://host.docker.internal:2379
   redis:
     image: bitnami/redis:latest
     container_name: redis
